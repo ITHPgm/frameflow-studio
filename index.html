@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#11131a" />
+  <meta name="description" content="FrameFlow Studio — an AI-assisted video editing workspace." />
+  <title>FrameFlow Studio</title>
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="FrameFlow Studio home">
+        <span class="brand-mark">F<span>F</span></span>
+        <span class="brand-name">frameflow <small>STUDIO</small></span>
+      </a>
+      <div class="project-heading">
+        <input id="projectName" class="project-name" value="Untitled project" aria-label="Project name" />
+        <span class="save-state"><i class="status-dot"></i><span id="saveState">Local project</span></span>
+      </div>
+      <div class="top-actions">
+        <button class="button button-quiet" id="saveProjectBtn" title="Save project"><span class="button-icon">↧</span> Save</button>
+        <button class="button button-primary" id="exportBtn"><span class="button-icon">↗</span> Export video</button>
+        <button class="avatar" title="Local workspace">FF</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <nav class="rail" aria-label="Workspace tools">
+        <button class="rail-btn active" data-panel="media" title="Media"><span>▧</span><small>Media</small></button>
+        <button class="rail-btn" data-panel="scenes" title="Scenes"><span>▦</span><small>Scenes</small></button>
+        <button class="rail-btn" data-panel="text" title="Text"><span>T</span><small>Text</small></button>
+        <button class="rail-btn" data-panel="audio" title="Audio"><span>♫</span><small>Audio</small></button>
+        <div class="rail-spacer"></div>
+        <button class="rail-btn" id="helpBtn" title="Project guide"><span>?</span><small>Guide</small></button>
+      </nav>
+
+      <aside class="asset-panel" id="assetPanel">
+        <div class="panel-head">
+          <div><p class="eyebrow">YOUR WORKSPACE</p><h2 id="panelTitle">Media library</h2></div>
+          <button class="icon-btn" id="panelMoreBtn" aria-label="More media options">•••</button>
+        </div>
+        <div class="panel-tabs"><button class="tab active" data-filter="all">All media <span id="assetCount">0</span></button><button class="tab" data-filter="video">Video</button><button class="tab" data-filter="image">Images</button><button class="tab" data-filter="audio">Audio</button></div>
+        <label class="upload-zone" for="fileInput" id="uploadZone">
+          <span class="upload-symbol">＋</span>
+          <strong>Import media</strong>
+          <span>Drop files here or browse</span>
+          <small>MP4, MOV, WEBM, MP3, WAV, PNG, JPG</small>
+        </label>
+        <input id="fileInput" type="file" accept="video/*,audio/*,image/*" multiple hidden />
+        <div class="asset-toolbar"><span class="muted-label">PROJECT ASSETS</span><button id="sortAssetsBtn" class="text-button">Recently added⌄</button></div>
+        <div class="asset-grid" id="assetGrid"><div class="empty-state"><span class="empty-icon">▧</span><strong>Your media lives here</strong><p>Import footage, images and audio to start building your story.</p></div></div>
+        <div class="panel-foot"><span class="storage-indicator"></span><span>Files stay in this browser</span><button id="clearAssetsBtn" class="text-button danger-text">Clear</button></div>
+      </aside>
+
+      <section class="editor-main">
+        <div class="editor-toolbar">
+          <div class="tool-group">
+            <button class="tool-btn" id="undoBtn" title="Undo" disabled>↶</button>
+            <button class="tool-btn" id="redoBtn" title="Redo" disabled>↷</button>
+            <span class="toolbar-divider"></span>
+            <button class="tool-btn" id="splitBtn" title="Split clip">✂ <span>Split</span></button>
+            <button class="tool-btn" id="deleteBtn" title="Delete selected clip">⌫ <span>Delete</span></button>
+          </div>
+          <div class="tool-group center-tools">
+            <span class="muted-label">CANVAS</span>
+            <select id="aspectSelect" class="select-control" aria-label="Canvas aspect ratio"><option value="16:9">16:9 Landscape</option><option value="9:16">9:16 Portrait</option><option value="1:1">1:1 Square</option><option value="4:5">4:5 Social</option></select>
+          </div>
+          <div class="tool-group"><button class="tool-btn" id="fitBtn">⌗ <span>Fit</span></button><button class="tool-btn" id="fullscreenBtn" title="Preview fullscreen">⛶</button></div>
+        </div>
+
+        <div class="preview-stage" id="previewStage">
+          <div class="preview-frame frame-16-9" id="previewFrame">
+            <video id="previewVideo" playsinline preload="metadata"></video>
+            <img id="previewImage" alt="Selected image preview" />
+            <div class="preview-placeholder" id="previewPlaceholder"><div class="placeholder-mark">F</div><strong>Your story starts here</strong><span>Import media or draft a storyboard to begin.</span></div>
+            <div class="preview-overlay" id="previewOverlay"></div>
+            <div class="preview-safe-area"></div>
+          </div>
+          <div class="preview-meta"><span id="previewClipName">No clip selected</span><span id="previewTime">00:00 / 00:00</span></div>
+          <div class="transport">
+            <button class="transport-btn" id="backBtn" title="Back one second">−1s</button>
+            <button class="play-btn" id="playBtn" title="Play">▶</button>
+            <button class="transport-btn" id="forwardBtn" title="Forward one second">+1s</button>
+            <span class="transport-divider"></span>
+            <button class="transport-btn" id="muteBtn" title="Mute preview">◖</button>
+            <span class="muted-label" id="previewStatus">PREVIEW</span>
+          </div>
+        </div>
+
+        <section class="assistant-dock">
+          <div class="assistant-badge">✦</div>
+          <div class="assistant-copy"><strong>Creative assistant</strong><span>Describe the video you want to make or the change you need.</span></div>
+          <input id="promptInput" type="text" placeholder="e.g. Create a 30-second product launch video with an energetic opening…" />
+          <button id="draftBtn" class="button button-assistant">Draft scenes <span>↗</span></button>
+        </section>
+
+        <section class="timeline-panel">
+          <div class="timeline-header">
+            <div class="timeline-title"><h3>Timeline</h3><span class="timeline-project-tag">MAIN SEQUENCE</span></div>
+            <div class="timeline-actions"><button class="tool-btn" id="addTextBtn">＋ <span>Text layer</span></button><button class="tool-btn" id="zoomOutBtn">−</button><input id="zoomRange" type="range" min="30" max="110" value="58" aria-label="Timeline zoom" /><button class="tool-btn" id="zoomInBtn">＋</button></div>
+          </div>
+          <div class="timeline-scroll" id="timelineScroll">
+            <div class="ruler-row"><div class="track-label ruler-label">TIME</div><div class="ruler" id="ruler"></div></div>
+            <div class="track-row"><div class="track-label"><span class="track-icon video-track-icon">▣</span><span>Video</span></div><div class="track-lane" id="videoLane"><div class="lane-empty">Drag media here or add it from the library</div></div></div>
+            <div class="track-row"><div class="track-label"><span class="track-icon audio-track-icon">♫</span><span>Audio</span></div><div class="track-lane audio-lane" id="audioLane"><div class="lane-empty">Music and voice tracks</div></div></div>
+            <div class="track-row"><div class="track-label"><span class="track-icon text-track-icon">T</span><span>Text</span></div><div class="track-lane text-lane" id="textLane"><div class="lane-empty">Titles and captions</div></div></div>
+            <div class="playhead" id="playhead"><span></span></div>
+          </div>
+          <div class="timeline-footer"><span id="timelineDuration">00:00 total duration</span><span>Autosaved locally · <span id="clipCount">0 clips</span></span></div>
+        </section>
+      </section>
+
+      <aside class="inspector-panel">
+        <div class="panel-head inspector-head"><div><p class="eyebrow">PROPERTIES</p><h2>Inspector</h2></div><span class="inspector-live">LIVE</span></div>
+        <div id="inspectorContent" class="inspector-content">
+          <div class="inspector-empty"><div class="inspector-empty-icon">⌑</div><strong>Nothing selected</strong><p>Select a clip on the timeline to adjust its properties, timing and appearance.</p></div>
+        </div>
+        <div class="inspector-bottom"><div class="tip-card"><span class="tip-icon">✦</span><div><strong>Editing tip</strong><p>Keep your first three seconds visually clear. A strong opening helps viewers understand why they should keep watching.</p></div></div></div>
+      </aside>
+    </main>
+    <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+    <input id="projectFileInput" type="file" accept="application/json,.json" hidden />
+  </div>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
